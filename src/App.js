@@ -22,35 +22,31 @@ function App() {
   }, []);
 
   // Sign up a new user AND sign them in automatically
-const handleSignUp = async () => {
-  if (!email || !password) return alert("Please fill all fields!");
-  
-  // Step 1: Create the account
-  const { error: signUpError } = await supabase.auth.signUp({
-    email,
-    password
-  });
-  
-  if (signUpError) {
-    alert(signUpError.message);
-    return;
-  }
+  const handleSignUp = async () => {
+    if (!email || !password) return alert("Please fill all fields!");
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password
+    });
+    
+    if (signUpError) {
+      alert(signUpError.message);
+      return;
+    }
 
-  // Step 2: Sign in the user immediately (no email confirmation needed)
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
+    // Sign in the user immediately
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
-  if (signInError) {
-    alert("Account created! Please sign in manually.");
-  } else {
-    // Clear form
-    setEmail('');
-    setPassword('');
-    // setUser will update automatically via useEffect
-  }
-};
+    if (signInError) {
+      alert("Account created! Please sign in manually.");
+    } else {
+      setEmail('');
+      setPassword('');
+    }
+  };
 
   // Sign in existing user
   const handleSignIn = async () => {
@@ -107,7 +103,7 @@ const handleSignUp = async () => {
   return (
     <div style={{ 
       padding: '2rem', 
-      maxWidth: '500px', 
+      maxWidth: '800px', 
       margin: '0 auto', 
       fontFamily: 'Segoe UI, system-ui, sans-serif',
       backgroundColor: '#0f0f0f',
@@ -118,11 +114,12 @@ const handleSignUp = async () => {
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      gap: '2rem'
     }}>
-      <h2 style={{ 
-        marginBottom: '1.5rem', 
-        fontSize: '26px',
+      <h1 style={{ 
+        marginBottom: '1rem', 
+        fontSize: '32px',
         fontWeight: '700',
         display: 'flex',
         alignItems: 'center',
@@ -131,28 +128,42 @@ const handleSignUp = async () => {
         color: '#4ade80'
       }}>
         🔒 SecureFileShare
-      </h2>
+      </h1>
 
       {!user ? (
-        <div style={{ textAlign: 'left', width: '100%' }}>
-          <h3 style={{ marginBottom: '1rem', textAlign: 'center', color: '#ccc' }}>
+        <div style={{ 
+          width: '100%',
+          textAlign: 'left',
+          padding: '2rem',
+          backgroundColor: '#151515',
+          borderRadius: '12px',
+          border: '1px solid #333',
+          boxShadow: 'inset 0 0 10px rgba(0,0,0,0.4)'
+        }}>
+          <h2 style={{ 
+            marginBottom: '1.5rem', 
+            fontSize: '24px',
+            fontWeight: '600',
+            textAlign: 'center',
+            color: '#ccc'
+          }}>
             {isSignUp ? 'Create Account' : 'Sign In'}
-          </h3>
+          </h2>
           
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             style={{
               width: '100%',
-              padding: '12px',
+              padding: '14px',
               marginBottom: '12px',
               borderRadius: '8px',
               border: '1px solid #333',
               backgroundColor: '#1a1a1a',
               color: '#e0e0e0',
-              fontSize: '15px'
+              fontSize: '16px'
             }}
           />
           
@@ -163,13 +174,13 @@ const handleSignUp = async () => {
             onChange={(e) => setPassword(e.target.value)}
             style={{
               width: '100%',
-              padding: '12px',
+              padding: '14px',
               marginBottom: '16px',
               borderRadius: '8px',
               border: '1px solid #333',
               backgroundColor: '#1a1a1a',
               color: '#e0e0e0',
-              fontSize: '15px'
+              fontSize: '16px'
             }}
           />
           
@@ -177,7 +188,7 @@ const handleSignUp = async () => {
             onClick={isSignUp ? handleSignUp : handleSignIn}
             style={{
               width: '100%',
-              padding: '12px',
+              padding: '14px',
               backgroundColor: '#0d6efd',
               color: 'white',
               border: 'none',
@@ -188,7 +199,7 @@ const handleSignUp = async () => {
               marginBottom: '12px'
             }}
           >
-            {isSignUp ? 'Sign Up' : 'Sign In'}
+            {isSignUp ? 'Sign Up & Login' : 'Sign In'}
           </button>
           
           <p style={{ textAlign: 'center', fontSize: '14px', color: '#aaa' }}>
@@ -220,7 +231,7 @@ const handleSignUp = async () => {
             justifyContent: 'center', 
             gap: '8px',
             marginBottom: '1.5rem',
-            fontSize: '15px',
+            fontSize: '16px',
             color: '#ccc'
           }}>
             <span>👤</span>
@@ -230,7 +241,7 @@ const handleSignUp = async () => {
           <button 
             onClick={handleLogout}
             style={{
-              padding: '8px 16px',
+              padding: '10px 20px',
               marginBottom: '1.5rem',
               backgroundColor: '#dc3545',
               color: 'white',
@@ -238,94 +249,176 @@ const handleSignUp = async () => {
               borderRadius: '6px',
               cursor: 'pointer',
               fontWeight: '600',
-              fontSize: '14px'
+              fontSize: '16px'
             }}
           >
             Sign Out
           </button>
           
-          <input 
-            type="file" 
-            onChange={(e) => setFile(e.target.files[0])}
-            style={{
-              marginBottom: '1rem',
-              padding: '10px',
-              width: '100%',
-              borderRadius: '8px',
-              border: '1px solid #333',
-              backgroundColor: '#1a1a1a',
-              color: '#e0e0e0',
-              fontSize: '15px'
-            }}
-          />
-          
-          <button 
-            onClick={handleUpload} 
-            disabled={uploading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: uploading ? '#555' : '#0d6efd',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: uploading ? 'not-allowed' : 'pointer',
+          <div style={{ 
+            width: '100%',
+            textAlign: 'left',
+            padding: '2rem',
+            backgroundColor: '#151515',
+            borderRadius: '12px',
+            border: '1px solid #333',
+            boxShadow: 'inset 0 0 10px rgba(0,0,0,0.4)'
+          }}>
+            <h3 style={{ 
+              marginBottom: '1rem', 
+              fontSize: '20px',
               fontWeight: '600',
-              fontSize: '16px'
-            }}
-          >
-            {uploading ? 'Uploading...' : 'Upload Secure File'}
-          </button>
-
-          {sharedLink && (
-            <div style={{ 
-              marginTop: '1.5rem', 
-              textAlign: 'left',
-              backgroundColor: '#151515',
-              padding: '16px',
-              borderRadius: '12px',
-              border: '1px solid #333',
-              boxShadow: 'inset 0 0 10px rgba(0,0,0,0.4)'
+              color: '#ccc'
             }}>
-              <p style={{ fontWeight: 'bold', color: '#6ee7b7', marginBottom: '8px', fontSize: '15px' }}>
-                ✅ Secure Download Link:
-              </p>
-              <input
-                type="text"
-                value={sharedLink}
-                readOnly
-                onClick={(e) => e.target.select()}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  borderRadius: '6px',
-                  border: '1px solid #444',
-                  backgroundColor: '#222',
-                  color: '#4ade80',
-                  fontSize: '13px',
-                  fontFamily: 'Consolas, monospace'
-                }}
-              />
-              <p style={{ 
-                marginTop: '10px', 
-                fontSize: '12px', 
-                color: '#777'
+              📤 Upload File
+            </h3>
+            
+            <input 
+              type="file" 
+              onChange={(e) => setFile(e.target.files[0])}
+              style={{
+                marginBottom: '1rem',
+                padding: '12px',
+                width: '100%',
+                borderRadius: '8px',
+                border: '1px solid #333',
+                backgroundColor: '#1a1a1a',
+                color: '#e0e0e0',
+                fontSize: '16px'
+              }}
+            />
+            
+            <button 
+              onClick={handleUpload} 
+              disabled={uploading}
+              style={{
+                width: '100%',
+                padding: '14px',
+                backgroundColor: uploading ? '#555' : '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: uploading ? 'not-allowed' : 'pointer',
+                fontWeight: '600',
+                fontSize: '16px'
+              }}
+            >
+              {uploading ? '🔒 Encrypting & Uploading...' : '📤 Upload Secure File'}
+            </button>
+
+            {sharedLink && (
+              <div style={{ 
+                marginTop: '1.5rem', 
+                textAlign: 'left',
+                backgroundColor: '#1a1a1a',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.4)'
               }}>
-                🔐 Link expires in 1 hour • Only accessible with this URL
-              </p>
-            </div>
-          )}
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  marginBottom: '12px',
+                  color: '#6ee7b7',
+                  fontWeight: '600'
+                }}>
+                  <span>✅</span>
+                  <span>Secure Download Link</span>
+                </div>
+                
+                <input
+                  type="text"
+                  value={sharedLink}
+                  readOnly
+                  onClick={(e) => e.target.select()}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #444',
+                    backgroundColor: '#252525',
+                    color: '#4ade80',
+                    fontSize: '14px',
+                    fontFamily: 'Consolas, monospace',
+                    marginBottom: '12px',
+                    boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.4)'
+                  }}
+                />
+                
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <a 
+                    href={sharedLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      backgroundColor: '#0d6efd',
+                      color: 'white',
+                      textDecoration: 'none',
+                      borderRadius: '8px',
+                      textAlign: 'center',
+                      fontWeight: '500',
+                      fontSize: '14px',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#0b5ed7'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#0d6efd'}
+                  >
+                    🔓 Open Secure Link
+                  </a>
+                  
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(sharedLink);
+                      alert('Link copied to clipboard!');
+                    }}
+                    style={{
+                      padding: '10px',
+                      backgroundColor: '#374151',
+                      color: 'white',
+                      border: '1px solid #4b5563',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      fontSize: '14px',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#4b5563'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#374151'}
+                  >
+                    📋 Copy
+                  </button>
+                </div>
+                
+                <p style={{ 
+                  marginTop: '12px', 
+                  fontSize: '12px', 
+                  color: '#aaa',
+                  textAlign: 'center'
+                }}>
+                  🔐 Link expires in 1 hour • Only accessible to those with the URL
+                </p>
+              </div>
+            )}
+          </div>
         </>
       )}
 
       <footer style={{ 
         marginTop: '2rem', 
         color: '#666', 
-        fontSize: '12px',
+        fontSize: '13px',
         borderTop: '1px solid #333',
         paddingTop: '1rem'
       }}>
-        © {new Date().getFullYear()} SecureFileShare • End-to-End Encrypted
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginBottom: '4px' }}>
+          <span>🛡️</span>
+          <span>End-to-End Encrypted File Sharing</span>
+        </div>
+        <div>© {new Date().getFullYear()} SecureFileShare</div>
       </footer>
     </div>
   );
