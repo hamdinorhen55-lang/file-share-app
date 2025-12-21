@@ -10,7 +10,7 @@ function App() {
   // Check user on load
   useEffect(() => {
     const getUser = async () => {
-      const {  { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
     };
     getUser();
