@@ -21,31 +21,15 @@ function App() {
     getUser();
   }, []);
 
-  // Sign up a new user AND sign them in automatically
+  // Sign up a new user
   const handleSignUp = async () => {
     if (!email || !password) return alert("Please fill all fields!");
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password
     });
-    
-    if (signUpError) {
-      alert(signUpError.message);
-      return;
-    }
-
-    // Sign in the user immediately
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (signInError) {
-      alert("Account created! Please sign in manually.");
-    } else {
-      setEmail('');
-      setPassword('');
-    }
+    if (error) alert(error.message);
+    else alert("Welcom!");
   };
 
   // Sign in existing user
@@ -115,8 +99,45 @@ function App() {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      gap: '2rem'
+      gap: '2rem',
+      position: 'relative',
+      overflow: 'hidden'
     }}>
+      {/* Background Gradient & Curves */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)',
+        zIndex: -1
+      }}></div>
+      
+      {/* Top Right Curve */}
+      <div style={{
+        position: 'absolute',
+        top: '-100px',
+        right: '-100px',
+        width: '300px',
+        height: '300px',
+        background: 'linear-gradient(45deg, rgba(255,255,255,0.05), transparent)',
+        borderRadius: '50%',
+        zIndex: -1
+      }}></div>
+      
+      {/* Bottom Left Curve */}
+      <div style={{
+        position: 'absolute',
+        bottom: '-100px',
+        left: '-100px',
+        width: '300px',
+        height: '300px',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.05), transparent)',
+        borderRadius: '50%',
+        zIndex: -1
+      }}></div>
+
       <h1 style={{ 
         marginBottom: '1rem', 
         fontSize: '32px',
@@ -125,7 +146,8 @@ function App() {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '10px',
-        color: '#4ade80'
+        color: '#4ade80',
+        textShadow: '0 0 10px rgba(74, 222, 128, 0.3)'
       }}>
         🔒 SecureFileShare
       </h1>
@@ -138,8 +160,22 @@ function App() {
           backgroundColor: '#151515',
           borderRadius: '12px',
           border: '1px solid #333',
-          boxShadow: 'inset 0 0 10px rgba(0,0,0,0.4)'
+          boxShadow: 'inset 0 0 10px rgba(0,0,0,0.4)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
+          {/* Decorative Corner */}
+          <div style={{
+            position: 'absolute',
+            top: '0',
+            right: '0',
+            width: '100px',
+            height: '100px',
+            background: 'linear-gradient(45deg, rgba(255,255,255,0.03), transparent)',
+            clipPath: 'polygon(0 0, 100% 0, 0 100%)',
+            zIndex: 1
+          }}></div>
+
           <h2 style={{ 
             marginBottom: '1.5rem', 
             fontSize: '24px',
@@ -196,7 +232,8 @@ function App() {
               cursor: 'pointer',
               fontWeight: '600',
               fontSize: '16px',
-              marginBottom: '12px'
+              marginBottom: '12px',
+              transition: 'all 0.2s ease'
             }}
           >
             {isSignUp ? 'Sign Up & Login' : 'Sign In'}
@@ -262,8 +299,22 @@ function App() {
             backgroundColor: '#151515',
             borderRadius: '12px',
             border: '1px solid #333',
-            boxShadow: 'inset 0 0 10px rgba(0,0,0,0.4)'
+            boxShadow: 'inset 0 0 10px rgba(0,0,0,0.4)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
+            {/* Decorative Corner */}
+            <div style={{
+              position: 'absolute',
+              top: '0',
+              right: '0',
+              width: '100px',
+              height: '100px',
+              background: 'linear-gradient(45deg, rgba(255,255,255,0.03), transparent)',
+              clipPath: 'polygon(0 0, 100% 0, 0 100%)',
+              zIndex: 1
+            }}></div>
+
             <h3 style={{ 
               marginBottom: '1rem', 
               fontSize: '20px',
@@ -300,7 +351,8 @@ function App() {
                 borderRadius: '8px',
                 cursor: uploading ? 'not-allowed' : 'pointer',
                 fontWeight: '600',
-                fontSize: '16px'
+                fontSize: '16px',
+                transition: 'all 0.2s ease'
               }}
             >
               {uploading ? '🔒 Encrypting & Uploading...' : '📤 Upload Secure File'}
