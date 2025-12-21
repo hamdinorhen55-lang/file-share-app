@@ -21,16 +21,36 @@ function App() {
     getUser();
   }, []);
 
-  // Sign up a new user
-  const handleSignUp = async () => {
-    if (!email || !password) return alert("Please fill all fields!");
-    const { error } = await supabase.auth.signUp({
-      email,
-      password
-    });
-    if (error) alert(error.message);
-    else alert("Check your email for confirmation!");
-  };
+  // Sign up a new user AND sign them in automatically
+const handleSignUp = async () => {
+  if (!email || !password) return alert("Please fill all fields!");
+  
+  // Step 1: Create the account
+  const { error: signUpError } = await supabase.auth.signUp({
+    email,
+    password
+  });
+  
+  if (signUpError) {
+    alert(signUpError.message);
+    return;
+  }
+
+  // Step 2: Sign in the user immediately (no email confirmation needed)
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (signInError) {
+    alert("Account created! Please sign in manually.");
+  } else {
+    // Clear form
+    setEmail('');
+    setPassword('');
+    // setUser will update automatically via useEffect
+  }
+};
 
   // Sign in existing user
   const handleSignIn = async () => {
